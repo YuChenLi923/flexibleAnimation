@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title></title>
+	<style rel='stylesheet'>
+		#test{
+			background-color:blue;
+			height:200px;
+			width:200px;
+			position:absolute;
+		}
+	</style>
+</head>
+<body>
+	<div class='test' id='test' style='left:100px;margin-left:100px;opacity:0;background-color:#333333'></div>
+	<script type="text/javascript" src="js/flexibleAnimation.js"></script>
+	<script type="text/javascript">
+		var div=new animate();
+		div.init(document.getElementById('test'))
+		div.start([
+			'opacity:1',
+			'left:500px',
+			'top:200px',
+			'backgroundColor:#124565'
+			]
+		,600,'linear');
+	</script>
+</body>
+</html>
