@@ -61,7 +61,8 @@ var flexibleAniamtion=(function(){
 		testDiv.style.transform=transformValue;
 		value=doc.defaultView.getComputedStyle(testDiv,null).transform;
 		doc.body.removeChild(testDiv);
-		return value;
+	
+		return matrixHandler(value).join();
 	}
 	//获取动画执行的当前阶段的对应的属性值
 	function curHandler(propertyName,self,prefix,curTime,startValue,endValue,duration){
@@ -225,7 +226,7 @@ var flexibleAniamtion=(function(){
 				var t=+new Date;
 				if(t>=self.startTime+self.duration){
 					for(var i=0,len=rules.length;i<len;i++){
-						self.dom.style[self.propertyName[i]]=self.prefix[i]+self.endValue[i]+self.suffix[i];
+						self.dom.style[self.propertyName[i]]=self.prefix[i]+self.endValue[i]+self.suffix[i];		
 					}
 					if(self.func){
 						self.func(self.args);
