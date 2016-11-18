@@ -1,4 +1,4 @@
-这个是用纯JS编写的创建动画的小demo,您不用使用jQ这些库，而且它能够兼容目前的主流游览器甚至到较老版本的IE6,你能轻松地添加动画，当前版本0.3，注意：这个版本暂时没有封装完毕，所以仅作为demo展示，如果使用请小心同名问题。
+.这个是用纯JS编写的创建动画的小demo,您不用使用jQ这些库，而且它能够兼容目前的主流游览器甚至到较老版本的IE6,你能轻松地添加动画，当前版本0.4。
 
 ## 使用方法
 引入flexibleAnimation.js文件，接着只需要下面这几步就能够创建出动画效果了
@@ -19,7 +19,7 @@
 初始化需要产生动画的元素,只需要传入元素对象即可，参数:对象
 ``` js
 
-	var div=new animate();
+	var div=flexibleAniamtion();
 	var test=document.getElementBy('test');
 	div.init(test);
 
@@ -66,6 +66,17 @@
 <div class='test' id='test' style='left:100px;margin-left:100px;opacity:0;background-color:#333333'></div>
 
 ```
+or css
+
+``` css
+.test{
+ left:100px;
+ margin-left:100px;
+ opacity:0;
+ background-color:#333333';
+}
+
+```
 
 ``` js
 
@@ -84,7 +95,8 @@
 ## 属性支持
 
 - 不支持所有简写的属性(勿用),例如:font,background,border
-- 不支持属性值为(xx,xx)。例如:transfrom(下个版本将会添加)
+- 不完全支持属性值为(xx,xx)
+- 不完全支持transform:rotate(xdeg)，不过也能产生效果
 
 ## 更新历史
 0.1
@@ -98,3 +110,9 @@
 0.3
 
 - 增加对颜色变化的支持
+
+0.4
+
+- 修复必须在内联样式添加值才能产生动画效果，现在在CSS文件中添加也可以产生动画效果
+- 修改了代码结构
+- 增加了对transform的部分支持
