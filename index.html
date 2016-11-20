@@ -18,18 +18,18 @@
 </head>
 <body>
 	<div class='test' id='test' ></div>
-	<script type="text/javascript" src="js/flexibleAnimation.js"></script>
+	<script type="text/javascript" src="js/flexibleAnimation.min.js"></script>
 	<script type="text/javascript">
 		var div=flexibleAniamtion();
 		div.init(document.getElementById('test'));
 		div.start([
 			'opacity:1',
-			'left:200px',
-			'top:300px',
 			'backgroundColor:#FF0000',
-			'transform:rotate(90deg)'
+			'transform:rotate(90deg)',
+			'left:400px',
+			'top:500px'
 			]
-		,600,'linear');
+		,800,'linear');
 	</script>
 </body>
 </html>

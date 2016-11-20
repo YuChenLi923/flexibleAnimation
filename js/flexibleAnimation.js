@@ -1,76 +1,60 @@
-//动画函数 0.4 by chen
-//date:2016/11/18 21:37 
+﻿//动画函数 0.5 by chen
+//date:2016/11/20 21:47 
 var flexibleAniamtion=(function(){
-	//获取颜色的16位进制的字符串
-	function getColorValue(color){
-	var colorObj={
-		r:0,
-		g:0,
-		b:0
-	}
-	if(color.indexOf('gb')==0||color.indexOf('GB')===0){
-		var colorValue=color.match(/[0-9]{1,}/g);
-		if(colorValue){
-			colorObj.r=parseInt(colorValue[0]);
-			colorObj.g=parseInt(colorValue[1]);
-			colorObj.b=parseInt(colorValue[2]);
+	function valueParse(value,property){
+		var result='',
+			pattern;
+		if(property==='transform'){
+			pattern=/[-]{0,}[0-9]{1,}[\.]{0,}[0-9]{0,}([e-][0-9]{0,}){0,}/g;	
 		}
+		if(property==='color'||property==='backgroundColor'){
+			pattern=/[0-9]{1,}/g;
+		}
+		result=value.match(pattern);	
+		return result;
 	}
-	else{
-		var colorValue=color.match(/[0-F]{2}/g);
-		colorObj.r=parseInt(colorValue[0],16);
-		colorObj.g=parseInt(colorValue[1],16);
-		colorObj.b=parseInt(colorValue[2],16);
-	}	
-		return colorObj;
-	}
-	//处理颜色单位
-	function colorHandler(self,startValue,endValue,curTime,duration){
-		var curR=Math.floor(self.easing(curTime,startValue.r,endValue.r,duration)),
-			curG=Math.floor(self.easing(curTime,startValue.g,endValue.g,duration)),
-			curB=Math.floor(self.easing(curTime,startValue.b,endValue.b,duration)),
-			R,G,B;
-			R=curR<=15?'0'+curR.toString(16):curR.toString(16);
-			G=curG<=15?'0'+curG.toString(16):curG.toString(16);
-			B=curB<=15?'0'+curB.toString(16):curB.toString(16);
-			cur=R+G+B;
-		return cur;
-	}
-	//获取当前时刻martix的值
-	function getMatrix(self,startValue,endValue,curTime,duration){
+
+	//值处理
+	function valueHander(self,startValue,endValue,curTime,duration,flag){
 		var len=startValue.length,
 			value=[];
-		for(var i=0;i<len;i++){
-				value[i]=self.easing(curTime,Number(startValue[i]),Number(endValue[i]),duration);
-		}
+			for(var i=0;i<len;i++){
+				if(!flag){
+					value[i]=self.easing(curTime,Number(startValue[i]),Number(endValue[i]),duration);	
+				}
+				else{
+					value[i]=Math.floor(self.easing(curTime,Number(startValue[i]),Number(endValue[i]),duration));
+				}
+			}
 		return value.join();
 	}
-	//处理变化矩阵matrix
-	function matrixHandler(transform){
-		var pattern=/[-]{0,}[0-9]{1,}[\.]{0,}[0-9]{0,}([e-][0-9]{0,}){0,}/g,
-			value=transform.match(pattern);
-		return value;
-	}
+
 	//转换为变形矩阵matrix
-	function toMatrix(transformValue){
+	function toStandardValue(value,property,obj){
 		var doc=document,
-			testDiv=doc.createElement('div'),
+			computedtyle=document.defaultView.getComputedStyle,
 			value;
-		testDiv.style.cssText='height:0px;width:0px;opacity:0';
-		doc.body.appendChild(testDiv);
-		testDiv.style.transform=transformValue;
-		value=doc.defaultView.getComputedStyle(testDiv,null).transform;
-		doc.body.removeChild(testDiv);
-	
-		return matrixHandler(value).join();
+		if(!obj){
+			var testDiv=doc.createElement('div');
+			testDiv.style.cssText='height:0px;width:0px;opacity:0;position:absolute;';
+			doc.body.appendChild(testDiv);
+			testDiv.style[property]=value;
+			value=computedtyle(testDiv,null)[property];
+			doc.body.removeChild(testDiv);
+		}
+		else{
+			value=computedtyle(obj,null)[property];	
+
+		}
+		return valueParse(value,property);
 	}
 	//获取动画执行的当前阶段的对应的属性值
 	function curHandler(propertyName,self,prefix,curTime,startValue,endValue,duration){
-		if(propertyName=='transform'){
-			return  getMatrix(self,matrixHandler(startValue),matrixHandler(endValue),curTime,duration);
+		if(propertyName==='transform'){
+			return  valueHander(self,startValue,endValue,curTime,duration,false);
 		}
-		if(prefix==='#'){
-			return colorHandler(self,getColorValue(startValue),getColorValue(endValue),curTime,duration);
+		if(propertyName==='background-color'){
+			return valueHander(self,startValue,endValue,curTime,duration,true);
 		}
 		else{
 			return self.easing(curTime,startValue,endValue,duration);
@@ -86,14 +70,17 @@ var flexibleAniamtion=(function(){
 		if(rules[0]=='transform'){
 			ruleObj.prefix='matrix('
 			ruleObj.suffix=')';
-			ruleObj.endValue=toMatrix(rules[1]);
-			ruleObj.startValue=computedtyle[rules[0]];
+			ruleObj.endValue=toStandardValue(rules[1],rules[0],null);
+			ruleObj.startValue=toStandardValue('',rules[0],obj);
 		}
 		else if(rules[0]=='color'||rules[0]=='backgroundColor'){
-				ruleObj.prefix='#';
-				ruleObj.suffix='';
-				ruleObj.endValue=rules[1].slice(1);
-				ruleObj.startValue=computedtyle[rules[0]].slice(1)||'000000';
+				ruleObj.prefix='rgb(';
+				ruleObj.suffix=')';
+				ruleObj.endValue=toStandardValue(rules[1],rules[0],null);
+				ruleObj.startValue=toStandardValue('',rules[0],obj);
+				if(rules[0]==='backgroundColor'){
+					rules[0]='background-color';
+				}
 		}
 		else{
 			if(suffix=rules[1].match(/[a-zA-Z%]{1,}/)){
@@ -125,40 +112,40 @@ var flexibleAniamtion=(function(){
 		sampleCurveX:function(t) {//贝赛尔曲线t时刻的坐标点的X坐标
 		   	return ((this.ax*t+this.bx)*t+this.cx)*t;
 		},
-		sampleCurveY : function(t) {
-		   	return ((this.ay * t + this.by) * t + this.cy) * t;
+		sampleCurveY:function(t){
+		   	return ((this.ay*t+this.by)*t+this.cy)*t;
 		},
-		sampleCurveDerivativeX : function(t) {//贝赛尔曲线t时刻的坐标点的Y坐标
-		    return (3.0 * this.ax * t + 2.0 * this.bx) * t + this.cx;
+		sampleCurveDerivativeX:function(t) {//贝赛尔曲线t时刻的坐标点的Y坐标
+		    return (3.0*this.ax*t+2.0*this.bx)*t+this.cx;
 		},
-		solveCurveX : function(x, epsilon) {
+		solveCurveX:function(x,epsilon) {
 				var t0,
 					t1,
 					t2,
 					x2,
 					d2,
 					i;
-				for (t2 = x, i = 0; i < 8; i++) {
-				    x2 = this.sampleCurveX(t2) - x;
-				    if (Math.abs (x2) < epsilon)
+				for (t2=x,i=0;i<8;i++) {
+				    x2= this.sampleCurveX(t2)-x;
+				    if(Math.abs (x2)<epsilon)
 				        return t2;
-				    d2 = this.sampleCurveDerivativeX(t2);
-				    if (Math.abs(d2) < epsilon)
+				    d2=this.sampleCurveDerivativeX(t2);
+				    if(Math.abs(d2)<epsilon)
 				        break;
-				    t2 = t2 - x2 / d2;
+				    t2=t2-x2/d2;
 				}
-				t0 = 0.0;
-				t1 = 1.0;
-				t2 = x;
-				if (t2 < t0) return t0;
-				if (t2 > t1) return t1;
-				while (t0 < t1) {
-					x2 = this.sampleCurveX(t2);
-					if (Math.abs(x2 - x) < epsilon)
+				t0=0.0;
+				t1=1.0;
+				t2=x;
+				if(t2<t0) return t0;
+				if(t2>t1) return t1;
+				while (t0<t1) {
+					x2=this.sampleCurveX(t2);
+					if (Math.abs(x2-x)<epsilon)
 						return t2;
-					if (x > x2) t0 = t2;
-					else t1 = t2;
-					t2 = (t1 - t0) * .5 + t0;
+					if (x>x2) t0=t2;
+					else t1=t2;
+					t2=(t1-t0)*.5+t0;
 				}
 				return t2;
 		},
@@ -170,8 +157,8 @@ var flexibleAniamtion=(function(){
 			ease:new UnitBezier(0.25,0.1,0.25,1),
 			linear:new UnitBezier(0,0,1,1),
 			easeIn:new UnitBezier(0.42,0,1,1),
-			easeOut:new UnitBezier(0, 0, 0.58, 1),
-			easeInOut:new UnitBezier(0.42, 0, 0.58, 1)
+			easeOut:new UnitBezier(0,0,0.58,1),
+			easeInOut:new UnitBezier(0.42,0,0.58,1)
 	}
 	var speedPattern=function(){
 		if(arguments.length===1&&typeof(arguments[0])==='string'){
@@ -213,21 +200,21 @@ var flexibleAniamtion=(function(){
 			this.easing=speedPattern(easing);
 			var self=this;
 			for(var i=0,len=rules.length;i<len;i++){
-				(function(t){
-					var ruleDate=ruleHandler(self.dom,rules[t]);
-					self.prefix[t]=ruleDate.prefix;
-					self.suffix[t]=ruleDate.suffix;
-					self.propertyName[t]=ruleDate.name;
-					self.endValue[t]=ruleDate.endValue;
-					self.startValue[t]=ruleDate.startValue;
-				})(i);
+				var ruleDate=ruleHandler(self.dom,rules[i]);
+				self.prefix[i]=ruleDate.prefix;
+				self.suffix[i]=ruleDate.suffix;
+				self.propertyName[i]=ruleDate.name;
+				self.endValue[i]=ruleDate.endValue;
+				self.startValue[i]=ruleDate.startValue;
 			}
 			var go=function(){
-				var t=+new Date;
+				var t=+new Date(),
+					result='';
 				if(t>=self.startTime+self.duration){
 					for(var i=0,len=rules.length;i<len;i++){
-						self.dom.style[self.propertyName[i]]=self.prefix[i]+self.endValue[i]+self.suffix[i];		
+						result=self.propertyName[i]+':'+self.prefix[i]+self.endValue[i]+self.suffix[i]+';'+result;		
 					}
+					self.dom.style.cssText=result;
 					if(self.func){
 						self.func(self.args);
 					}
@@ -237,18 +224,15 @@ var flexibleAniamtion=(function(){
 					var cur=[];
 					for(var i=0,len=rules.length;i<len;i++){
 							cur=curHandler(self.propertyName[i],self,self.prefix[i],t-self.startTime,self.startValue[i],self.endValue[i],self.duration);
-							self.update(cur,self.propertyName[i],self.suffix[i],self.prefix[i]);
+							result=self.propertyName[i]+':'+self.prefix[i]+cur+self.suffix[i]+';'+result;
 					}	
-					setTimeout(function(){
+					self.dom.style.cssText=result;
+					requestAnimationFrame(function(){
 						go();
-					},13);
+					});
 				}
 			};
 			go();
-		},
-		update:function(cur,propertyName,suffix,prefix){
-			this.dom.style[propertyName]=prefix+cur+suffix;
-			
 		},
 		callback:function(){
 			this.func=Array.prototype.shift.apply(arguments);
@@ -259,4 +243,25 @@ var flexibleAniamtion=(function(){
 		return new animate();
 	}
 })(); 	
-
+(function() {
+    var lastTime = 0;
+    var vendors = ['webkit', 'moz'];
+    for(var x = 0; x < vendors.length && !window.requestAnimationFrame; ++x) {
+        window.requestAnimationFrame = window[vendors[x]+'RequestAnimationFrame'];
+        window.cancelAnimationFrame =
+          window[vendors[x]+'CancelAnimationFrame'] || window[vendors[x]+'CancelRequestAnimationFrame'];
+    }
+    if (!window.requestAnimationFrame)
+        window.requestAnimationFrame = function(func) {
+            var currTime = new Date().getTime();
+            var timeToCall = Math.max(0, 16 - (currTime - lastTime));
+            var id = window.setTimeout(function() { func(); },
+              timeToCall);
+            lastTime = currTime + timeToCall;
+            return id;
+        };
+    if (!window.cancelAnimationFrame)
+        window.cancelAnimationFrame = function(id) {
+            clearTimeout(id);
+        };
+}());
