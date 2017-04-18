@@ -2,11 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="b70a58fd-f3c1-4163-9349-e9589cc3d8f8" name="默认的" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/history.md" afterPath="$PROJECT_DIR$/doc/history.md" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/readme.md" afterPath="$PROJECT_DIR$/readme.md" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/flexibleAnimation.js" afterPath="$PROJECT_DIR$/src/flexibleAnimation.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/tests/index.html" afterPath="$PROJECT_DIR$/tests/index.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/tests/js/flexibleAnimation.min.js" afterPath="$PROJECT_DIR$/tests/js/flexibleAnimation.min.js" />
     </list>
     <ignored path="flexibleAnimation.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -117,8 +113,8 @@
       <list>
         <option value="$PROJECT_DIR$/tests/index.html" />
         <option value="$PROJECT_DIR$/tests/js/flexibleAnimation.min.js" />
-        <option value="$PROJECT_DIR$/readme.md" />
         <option value="$PROJECT_DIR$/src/flexibleAnimation.js" />
+        <option value="$PROJECT_DIR$/readme.md" />
       </list>
     </option>
   </component>
@@ -297,12 +293,12 @@
       <workItem from="1492350112439" duration="4362000" />
       <workItem from="1492433928503" duration="5082000" />
       <workItem from="1492481204422" duration="26000" />
-      <workItem from="1492481262708" duration="7315000" />
+      <workItem from="1492481262708" duration="7479000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="17423000" />
+    <option name="totallyTimeSpent" value="17587000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-1928" y="-8" width="1936" height="1096" extended-state="6" />
