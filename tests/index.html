@@ -14,22 +14,48 @@
 			transform:rotate(0deg);
 			position:absolute;
 		}
+		#test1{
+			top:100px;
+			background-color:red;
+			height:200px;
+			width:200px;
+			left:200px;
+			margin-left:100px;
+			opacity:0;
+			transform:rotate(0deg);
+			position:absolute;
+		}
 	</style>
 </head>
 <body>
 	<div class='test' id='test' ></div>
+	<div class='test' id='test1' ></div>
 	<script type="text/javascript" src="js/flexibleAnimation.min.js"></script>
 	<script type="text/javascript">
-		var div=flexibleAniamtion();
-		div.init(document.getElementById('test'));
-		div.start([
-			'opacity:1',
-			'backgroundColor:#FF0000',
-			'transform:rotate(90deg)',
-			'left:400px',
-			'top:500px'
-			]
-		,800,'linear');
+		var div=flexibleAniamtion.createAnimation(document.getElementById('test'),{
+            rules:[
+                'opacity:1',
+                'backgroundColor:#FF0000',
+                'transform:rotate(90deg)',
+                'left:400px',
+                'top:500px'
+            ],
+            duration:800,
+            easing:'ease'
+        });
+        var div1=flexibleAniamtion.createAnimation(document.getElementById('test1'),{
+            rules:[
+                'opacity:1',
+                'backgroundColor:#00FF00',
+                'transform:rotate(90deg)',
+                'left:400px',
+                'top:500px'
+            ],
+            duration:1000,
+            easing:'ease'
+        });
+		var myAnimationList = flexibleAniamtion.createAnimationList(div,div1);
+		myAnimationList.start();
 	</script>
 </body>
 </html>
