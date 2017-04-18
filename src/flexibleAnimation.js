@@ -1,5 +1,5 @@
-﻿//动画函数 0.5 by chen
-//date:2016/11/20 21:47
+﻿//动画函数 0.4.0 by chen
+//date:2016/4/18 
 (function(window){
     // 数值解析
     function valueParse(value,property){
