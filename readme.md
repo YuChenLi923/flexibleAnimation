@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # flexAnimation
 
 这个是用纯JS编写的轻量级生成动画的库，而且它能够兼容目前的主流游览器甚至到较老版本的IE6。
@@ -6,12 +5,6 @@
 当前版本0.4.0。
 
 ## 快速开始
-=======
-# flexibleAnimation
-这个是用纯JS编写的创建动画的小demo,您不用使用jQ这些库，而且它能够兼容目前的主流游览器甚至到较老版本的IE6,你能轻松地添加动画，当前版本0.5。
->>>>>>> 7405ff22473f2cfc9f3dabef273432400a392442
-
-引入flexibleAnimation.min.js或者flexibleAnimation.js文件，接着只需要下面这几步就能够创建出动画效果了
 
 ### 创建Animate对象的实例
 
@@ -114,10 +107,10 @@ myAnimationList.start();
 - dom	可选,这个Animate对象绑定的DOM元素
 
 - config 可选,动画效果的配置信息
-- - rules 数组,描述动画最终的目标信息
-- - easing 字符串,可选 设定动画的速度曲线(可选:'linear'、'ease'(默认)、'easeIn'、'easeOut'、'easeInOut') 
+  - rules 数组,描述动画最终的目标信息
+  - easing 字符串,可选 设定动画的速度曲线(可选:'linear'、'ease'(默认)、'easeIn'、'easeOut'、'easeInOut') 
 		   数组-必须为4个数字,前两个数字代表贝塞尔曲线的P1点，后两个数字代表P2点。例如:0.42,0.12,0.23,0.18
-- - duration 动画持续时间，单位为ms	
+  - duration 动画持续时间，单位为ms	
 
 ### createAnimationList(Animate,Animate1,Animate2...)
 创建并返回一个动画队列
@@ -153,10 +146,10 @@ var myAnimationList = flexibleAniamtion.createAnimationList(myAnimation,myAnimat
 ### set(config)
 
 - config 对象,配置动画的信息
-- - rules 数组,描述动画最终的目标信息
-- - easing 字符串,可选 设定动画的速度曲线(可选:'linear'、'ease'(默认)、'easeIn'、'easeOut'、'easeInOut') 
+  - rules 数组,描述动画最终的目标信息
+  - easing 字符串,可选 设定动画的速度曲线(可选:'linear'、'ease'(默认)、'easeIn'、'easeOut'、'easeInOut') 
 		   数组-必须为4个数字,前两个数字代表贝塞尔曲线的P1点，后两个数字代表P2点。例如:0.42,0.12,0.23,0.18
-- - duration 动画持续时间，单位为ms
+  - duration 动画持续时间，单位为ms
 
 举个例子:
 
