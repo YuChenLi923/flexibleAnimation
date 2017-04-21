@@ -1,5 +1,8 @@
-﻿//动画函数 0.4.0 by chen
-//date:2016/4/18 
+﻿/*
+ *@author: YuChenLi
+ *@version:0.4.1
+ *@date: 2017/4/21
+*/
 (function(window){
     // 数值解析
     function valueParse(value,property){
@@ -27,11 +30,10 @@
         }
         return value.join();
     }
-    //转换为变形矩阵matrix
+    //转换为规划的样式值
     function toStandardValue(value,property,obj){
         var doc=document,
-            computedtyle=document.defaultView.getComputedStyle,
-            value;
+            computedtyle=document.defaultView.getComputedStyle;
         if(!obj){
             var testDiv=doc.createElement('div');
             testDiv.style.cssText='height:0px;width:0px;opacity:0;position:absolute;';
@@ -195,7 +197,7 @@
         },
         handleCur:function (curTime,startTime) {
             var result = '',
-                endTime = startTime + this.duration;
+                endTime = startTime + this.duration + this.delay;
             if(curTime>=endTime){
                 for(var i=0,len=this.rules.length;i<len;i++){
                     result=this.propertyName[i]+':'+this.prefix[i]+this.endValue[i]+this.suffix[i]+';'+result;
@@ -208,17 +210,21 @@
                 return false;
             }
             else{
-                var cur=[];
-                for(var i=0,len=this.rules.length;i<len;i++){
-                    cur=curHandler(this.propertyName[i],this,this.prefix[i],curTime-startTime,this.startValue[i],this.endValue[i],this.duration);
-                    result=this.propertyName[i]+':'+this.prefix[i]+cur+this.suffix[i]+';'+result;
+                if(curTime - startTime >= this.delay) {
+
+                    var cur = [];
+                    for (var i = 0, len = this.rules.length; i < len; i++) {
+                        cur = curHandler(this.propertyName[i], this, this.prefix[i], curTime - startTime - this.delay, this.startValue[i], this.endValue[i], this.duration);
+                        result = this.propertyName[i] + ':' + this.prefix[i] + cur + this.suffix[i] + ';' + result;
+                    }
+                    this.dom.style.cssText = result;
                 }
-                this.dom.style.cssText=result;
                 return true;
             }
         },
         set:function (config) {
             var rules = config.rules,
+                delay = config.delay || 0,
                 duration = config.duration || 1000,
                 easing = config.easing || 'ease';
             this.rules = config.rules;
@@ -230,6 +236,7 @@
                 this.endValue[i]=ruleDate.endValue;
                 this.startValue[i]=ruleDate.startValue;
             }
+            this.delay = delay;
             this.duration = duration ;
             this.easing = speedPattern(easing);
         },
@@ -293,7 +300,7 @@
     function create(dom,config) {
         var newAnimate = new Animate();
         if(dom)
-        	newAnimate.init(dom);
+            newAnimate.init(dom);
         if(config) {
             newAnimate.set(config);
         }

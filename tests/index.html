@@ -5,7 +5,7 @@
 	<style rel='stylesheet'>
 		#test{
 			top:100px;
-			background-color:blue;
+			background-color:rgba(255,0,0,0.5);
 			height:200px;
 			width:200px;
 			left:200px;
@@ -16,7 +16,7 @@
 		}
 		#test1{
 			top:100px;
-			background-color:red;
+			background-color:rgba(0,0,255,0.5);
 			height:200px;
 			width:200px;
 			left:200px;
@@ -35,22 +35,24 @@
 		var div=flexibleAniamtion.createAnimation(document.getElementById('test'),{
             rules:[
                 'opacity:1',
-                'backgroundColor:#FF0000',
+                'backgroundColor:rgba(15,15,15,0.7)',
                 'transform:rotate(90deg)',
                 'left:400px',
                 'top:500px'
             ],
+            delay:1000,
             duration:800,
             easing:'ease'
         });
         var div1=flexibleAniamtion.createAnimation(document.getElementById('test1'),{
             rules:[
                 'opacity:1',
-                'backgroundColor:#00FF00',
+                'backgroundColor:rgba(0,255,0,0.5)',
                 'transform:rotate(90deg)',
                 'left:400px',
                 'top:500px'
             ],
+            delay:200,
             duration:1000,
             easing:'ease'
         });

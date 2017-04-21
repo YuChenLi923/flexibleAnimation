@@ -2,7 +2,7 @@
 
 这个是用纯JS编写的轻量级生成动画的库，而且它能够兼容目前的主流游览器甚至到较老版本的IE6。
 
-当前版本0.4.0。
+当前版本0.4.1。
 
 ## 快速开始
 
@@ -111,6 +111,7 @@ myAnimationList.start();
   - easing 字符串,可选 设定动画的速度曲线(可选:'linear'、'ease'(默认)、'easeIn'、'easeOut'、'easeInOut') 
 		   数组-必须为4个数字,前两个数字代表贝塞尔曲线的P1点，后两个数字代表P2点。例如:0.42,0.12,0.23,0.18
   - duration 动画持续时间，单位为ms	
+  - delay 动画的延迟时间,单位为ms
 
 ### createAnimationList(Animate,Animate1,Animate2...)
 创建并返回一个动画队列
@@ -213,4 +214,6 @@ myAnimationList.delete(myAnimation1);
 - 不支持所有简写的属性(勿用),例如:font,background,border
 - 不完全支持transform:rotate(xdeg)，不过也能产生效果
 - 如果存在两个同样的属性，只对第一个起作用
+- IE8以下以及个别游览器颜色变化效果仅支持rgb格式
+- 如果想要使rgba产生动画效果，该DOM元素本身的颜色值必须为rgba格式，否则无效！
 
