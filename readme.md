@@ -151,6 +151,7 @@ var myAnimationList = flexibleAniamtion.createAnimationList(myAnimation,myAnimat
   - easing 字符串,可选 设定动画的速度曲线(可选:'linear'、'ease'(默认)、'easeIn'、'easeOut'、'easeInOut') 
 		   数组-必须为4个数字,前两个数字代表贝塞尔曲线的P1点，后两个数字代表P2点。例如:0.42,0.12,0.23,0.18
   - duration 动画持续时间，单位为ms
+  - delay 动画的延迟时间,单位为ms
 
 举个例子:
 
