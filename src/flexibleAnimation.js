@@ -2,7 +2,7 @@
  *@author: YuChenLi
  *@version:0.4.1
  *@date: 2017/4/21
-*/
+ */
 (function(window){
     // 数值解析
     function valueParse(value,property){
@@ -13,7 +13,8 @@
         if(property==='color'||property==='backgroundColor'){
             pattern=/[0-9]{1,}/g;
         }
-        result=value.match(pattern);
+        if(value)
+            result=value.match(pattern);
         return result;
     }
     //值处理
@@ -32,20 +33,22 @@
     }
     //转换为规划的样式值
     function toStandardValue(value,property,obj){
-        var doc=document,
-            computedtyle=document.defaultView.getComputedStyle;
+        var doc=document;
         if(!obj){
             var testDiv=doc.createElement('div');
             testDiv.style.cssText='height:0px;width:0px;opacity:0;position:absolute;';
             doc.body.appendChild(testDiv);
-            testDiv.style[property]=value;
-            value=computedtyle(testDiv,null)[property];
+            try {
+                testDiv.style[property] = value;
+            }
+            catch(e) {};
+            value=getComputedStyles(testDiv)[property];
             doc.body.removeChild(testDiv);
         }
         else{
-            value=computedtyle(obj,null)[property];
-
+            value=getComputedStyles(obj)[property];
         }
+
         return valueParse(value,property);
     }
     //获取动画执行的当前阶段的对应的属性值
@@ -60,18 +63,28 @@
             return self.easing(curTime,startValue,endValue,duration);
         }
     }
+    function getComputedStyles(obj) {
+        if(window.getComputedStyle){
+            return document.defaultView.getComputedStyle(obj,null);
+        }
+        else if( obj.currentStyle ){
+            return obj.currentStyle;
+        }
+
+    }
     //处理样式规则
     function ruleHandler(obj,rule){
         var ruleObj=new Object(),
             rules=rule.split(':'),
             suffix,
-            computedtyle=document.defaultView.getComputedStyle(obj,null),
+            computedtyle=getComputedStyles(obj),
             result;
         if(rules[0]=='transform'){
             ruleObj.prefix='matrix('
             ruleObj.suffix=')';
             ruleObj.endValue=toStandardValue(rules[1],rules[0],null);
             ruleObj.startValue=toStandardValue('',rules[0],obj);
+
         }
         else if(rules[0]=='color'||rules[0]=='backgroundColor'){
             ruleObj.prefix='rgb(';
@@ -95,6 +108,9 @@
             ruleObj.suffix=suffix;
         }
         ruleObj.name=rules[0];
+        if(ruleObj.startValue == null || ruleObj.endValue == null){
+            ruleObj = null;
+        }
         return ruleObj;
     }
     //贝塞尔动画时间曲线函数，使用的时候调用其中的solve(x,epsilon)方法，参数x为当前动画执行的时间,参数eplsilon为精确度
@@ -188,6 +204,7 @@
         this.func=null;
         this.args=null;
         this.prefix=[];
+        this.realyRules = 0;
         this.rules = [];
     }
     Animate.prototype={
@@ -199,7 +216,7 @@
             var result = '',
                 endTime = startTime + this.duration + this.delay;
             if(curTime>=endTime){
-                for(var i=0,len=this.rules.length;i<len;i++){
+                for(var i=0,len= this.realyRules;i<len;i++){
                     result=this.propertyName[i]+':'+this.prefix[i]+this.endValue[i]+this.suffix[i]+';'+result;
                 }
                 this.dom.style.cssText=result;
@@ -213,10 +230,11 @@
                 if(curTime - startTime >= this.delay) {
 
                     var cur = [];
-                    for (var i = 0, len = this.rules.length; i < len; i++) {
+                    for (var i = 0; i < this.realyRules; i++) {
                         cur = curHandler(this.propertyName[i], this, this.prefix[i], curTime - startTime - this.delay, this.startValue[i], this.endValue[i], this.duration);
                         result = this.propertyName[i] + ':' + this.prefix[i] + cur + this.suffix[i] + ';' + result;
                     }
+
                     this.dom.style.cssText = result;
                 }
                 return true;
@@ -224,18 +242,23 @@
         },
         set:function (config) {
             var rules = config.rules,
+                t = 0,
                 delay = config.delay || 0,
                 duration = config.duration || 1000,
                 easing = config.easing || 'ease';
             this.rules = config.rules;
             for(var i=0,len=rules.length;i<len;i++){
                 var ruleDate=ruleHandler(this.dom,rules[i]);
-                this.prefix[i]=ruleDate.prefix;
-                this.suffix[i]=ruleDate.suffix;
-                this.propertyName[i]=ruleDate.name;
-                this.endValue[i]=ruleDate.endValue;
-                this.startValue[i]=ruleDate.startValue;
+                if(ruleDate != null) {
+                    this.prefix.push(ruleDate.prefix);
+                    this.suffix.push(ruleDate.suffix);
+                    this.propertyName.push(ruleDate.name);
+                    this.endValue.push(ruleDate.endValue);
+                    this.startValue.push(ruleDate.startValue);
+                    ++ t;
+                }
             }
+            this.realyRules = t;
             this.delay = delay;
             this.duration = duration ;
             this.easing = speedPattern(easing);
@@ -283,7 +306,7 @@
                 });
         };
         go();
-    }
+    };
     AnimateList.prototype.add = function () {
         var i,
             len;
@@ -292,10 +315,10 @@
                 this.push(arguments[i]);
         }
         return this;
-    }
-    AnimateList.prototype.delete = function (animate) {
+    };
+    AnimateList.prototype.remove = function (animate) {
         this.splice(this.indexOf(animate),1);
-    }
+    };
     // create animated对象，返回标识符
     function create(dom,config) {
         var newAnimate = new Animate();
