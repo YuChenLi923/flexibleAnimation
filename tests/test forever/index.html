@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title></title>
+    <meta charset="utf-8">
+	<style rel='stylesheet'>
+		#test{
+			top:100px;
+			background-color:rgb(255,0,0);
+			height:200px;
+			width:200px;
+			left:200px;
+			margin-left:100px;
+
+			transform:rotate(0deg);
+			position:absolute;
+		}
+
+	</style>
+</head>
+<body>
+	<div class='test' id='test' ></div>
+	<script type="text/javascript" src="js/flexibleAnimation.min.js"></script>
+	<script type="text/javascript">
+		var Aniamtion1=flexibleAniamtion.createAnimation(document.getElementById('test'),{
+            rules:[
+                'left:+100px',
+				'top:+100px'
+            ],
+            delay:0,
+            duration:1000,
+            forever:true,
+            easing:'ease'
+        });
+        Aniamtion1.start();
+	</script>
+</body>
+</html>

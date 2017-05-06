@@ -11,7 +11,6 @@
 			width:200px;
 			left:200px;
 			margin-left:100px;
-			opacity:0;
 			transform:rotate(0deg);
 			position:absolute;
 		}
@@ -35,14 +34,11 @@
 	<script type="text/javascript">
 		var div=flexibleAniamtion.createAnimation(document.getElementById('test'),{
             rules:[
-                'opacity:1',
-                'backgroundColor:rgba(15,15,15)',
-                'transform:rotate(90deg)',
-                'left:400px',
-                'top:500px'
+                'left:+100px'
             ],
-            delay:1000,
-            duration:800,
+            delay:0,
+            duration:1000,
+            times:3,
             easing:'ease'
         });
         var div1=flexibleAniamtion.createAnimation(document.getElementById('test1'),{
@@ -50,10 +46,11 @@
                 'opacity:1',
                 'backgroundColor:rgb(0,255,0)',
                 'transform:rotate(90deg)',
-                'left:400px',
-                'top:500px'
+                'left:+100px',
+                'top:+100px'
             ],
-            delay:200,
+            delay:0,
+            times:3,
             duration:1000,
             easing:'ease'
         });

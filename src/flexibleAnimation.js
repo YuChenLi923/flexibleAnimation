@@ -1,7 +1,7 @@
 ﻿/*
  *@author: YuChenLi
- *@version:0.4.1
- *@date: 2017/4/21
+ *@version:0.5.0
+ *@date: 2017/5/7
  */
 (function(window){
     // 数值解析
@@ -72,46 +72,69 @@
         }
 
     }
-    //处理样式规则
-    function ruleHandler(obj,rule){
-        var ruleObj=new Object(),
-            rules=rule.split(':'),
+    //处理每一个样式规则
+    function ruleHandler(obj,rule) {
+        var ruleObj = new Object(),
+            rules = rule.split(':'),
             suffix,
-            computedtyle=getComputedStyles(obj),
+            isChange = 0,
+            computedtyle = getComputedStyles(obj),
             result;
-        if(rules[0]=='transform'){
-            ruleObj.prefix='matrix('
-            ruleObj.suffix=')';
-            ruleObj.endValue=toStandardValue(rules[1],rules[0],null);
-            ruleObj.startValue=toStandardValue('',rules[0],obj);
+        if (rules[0] == 'transform') {
+            ruleObj.prefix = 'matrix('
+            ruleObj.suffix = ')';
+            ruleObj.endValue = toStandardValue(rules[1], rules[0], null);
+            ruleObj.startValue = toStandardValue('', rules[0], obj);
 
         }
-        else if(rules[0]=='color'||rules[0]=='backgroundColor'){
-            ruleObj.prefix='rgb(';
-            ruleObj.suffix=')';
-            ruleObj.endValue=toStandardValue(rules[1],rules[0],null);
-            ruleObj.startValue=toStandardValue('',rules[0],obj);
-            if(rules[0]==='backgroundColor'){
-                rules[0]='background-color';
+        else if (rules[0] == 'color' || rules[0] == 'backgroundColor') {
+            ruleObj.prefix = 'rgb(';
+            ruleObj.suffix = ')';
+            ruleObj.endValue = toStandardValue(rules[1], rules[0], null);
+            ruleObj.startValue = toStandardValue('', rules[0], obj);
+            if (rules[0] === 'backgroundColor') {
+                rules[0] = 'background-color';
             }
         }
-        else{
-            if(suffix=rules[1].match(/[a-zA-Z%]{1,}/)){
-                suffix=rules[1].match(/[a-zA-Z%]{1,}/)[0];
+        else {
+            if (suffix = rules[1].match(/[a-zA-Z%]{1,}/)) {
+                suffix = rules[1].match(/[a-zA-Z%]{1,}/)[0];
             }
-            else{
-                suffix='';
+            else {
+                suffix = '';
             }
-            ruleObj.prefix='';
-            ruleObj.startValue=parseInt(computedtyle[rules[0]]);
-            ruleObj.endValue=parseInt(rules[1]);
-            ruleObj.suffix=suffix;
+            rules[1].replace(/^[\+\-]{1}/, function (match) {
+                if (match == '+') {
+                    isChange = 1;
+                } else if (match == '-') {
+                    isChange = -1;
+                }
+                return '';
+            });
+
+            ruleObj.prefix = '';
+            ruleObj.startValue = parseInt(computedtyle[rules[0]]);
+            ruleObj.addValue = isChange * parseInt(rules[1]);
+            ruleObj.endValue = isChange == 0 ? parseInt(rules[1]) : ruleObj.startValue + ruleObj.addValue;
+            ruleObj.suffix = suffix;
         }
-        ruleObj.name=rules[0];
-        if(ruleObj.startValue == null || ruleObj.endValue == null){
+        ruleObj.name = rules[0];
+        if (ruleObj.startValue == null || ruleObj.endValue == null) {
             ruleObj = null;
         }
         return ruleObj;
+    }
+
+    // 修改结束值和起点值
+
+    function modifyValue(that,len){
+        var i;
+        for( i = 0 ; i < len ; i++ ){
+            if(that.addValue[i]){
+                that.startValue[i] = that.endValue[i];
+                that.endValue[i] = that.startValue[i] + that.addValue[i];
+            }
+        }
     }
     //贝塞尔动画时间曲线函数，使用的时候调用其中的solve(x,epsilon)方法，参数x为当前动画执行的时间,参数eplsilon为精确度
     function UnitBezier(p1x, p1y, p2x, p2y) {
@@ -194,18 +217,22 @@
     }
     // animated对象
     function Animate(){
-        this.dom=null;
-        this.startValue=[];
-        this.endValue=[];
-        this.propertyName=[];
-        this.suffix=[];
-        this.easing=null;
-        this.duration=null;
-        this.func=null;
-        this.args=null;
-        this.prefix=[];
+        this.dom = null;
+        this.startValue = [];
+        this.endValue = [];
+        this.addValue = [];
+        this.propertyName = [];
+        this.suffix = [];
+        this.easing = null;
+        this.duration = null;
+        this.func = null;
+        this.args = null;
+        this.times = 1;
+        this.starTime = null;
+        this.prefix = [];
         this.realyRules = 0;
         this.rules = [];
+        this.forever = false;
     }
     Animate.prototype={
         constructor:Animate,
@@ -213,7 +240,11 @@
             this.dom=dom;
         },
         handleCur:function (curTime,startTime) {
+            if(!this.startTime){
+                this.startTime = startTime;
+            }
             var result = '',
+                startTime = this.startTime,
                 endTime = startTime + this.duration + this.delay;
             if(curTime>=endTime){
                 for(var i=0,len= this.realyRules;i<len;i++){
@@ -224,17 +255,23 @@
                 if(this.func){
                     this.func(this.args);
                 }
-                return false;
+
+                if(this.times>0 || this.forever){
+                    this.startTime = +new Date();
+                    modifyValue(this,this.realyRules);
+                    this.times=this.times-1
+                    return true;
+                }else{
+                    return false;
+                }
             }
             else{
                 if(curTime - startTime >= this.delay) {
-
                     var cur = [];
                     for (var i = 0; i < this.realyRules; i++) {
                         cur = curHandler(this.propertyName[i], this, this.prefix[i], curTime - startTime - this.delay, this.startValue[i], this.endValue[i], this.duration);
                         result = this.propertyName[i] + ':' + this.prefix[i] + cur + this.suffix[i] + ';' + result;
                     }
-
                     this.dom.style.cssText = result;
                 }
                 return true;
@@ -243,6 +280,8 @@
         set:function (config) {
             var rules = config.rules,
                 t = 0,
+                forever = config.forever || false,
+                times = config.times,
                 delay = config.delay || 0,
                 duration = config.duration || 1000,
                 easing = config.easing || 'ease';
@@ -255,20 +294,22 @@
                     this.propertyName.push(ruleDate.name);
                     this.endValue.push(ruleDate.endValue);
                     this.startValue.push(ruleDate.startValue);
+                    this.addValue.push(ruleDate.addValue);
                     ++ t;
                 }
             }
+            this.times = times-1;
             this.realyRules = t;
             this.delay = delay;
             this.duration = duration ;
+            this.forever = forever;
             this.easing = speedPattern(easing);
         },
         start:function(){
-            var self = this,
-                startTime=+new Date;
+            var self = this;
+            this.startTime=+new Date;
             var go=function(){
-                var t=+new Date();
-                if(self.handleCur(t,startTime)){
+                if(self.handleCur(+new Date())){
                     requestAnimationFrame(function(){
                         go();
                     });
@@ -279,6 +320,9 @@
         callback:function(){
             this.func=Array.prototype.shift.apply(arguments);
             this.args=arguments;
+        },
+        remove:function(){
+            delete  this;
         }
     }
     // AnimateList

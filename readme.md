@@ -2,7 +2,7 @@
 
 这个是用纯JS编写的轻量级生成动画的库，而且它能够兼容目前的主流游览器甚至到较老版本的IE6。
 
-当前版本0.4.2。
+当前版本0.5.0。
 
 ## 快速开始
 
@@ -96,6 +96,58 @@ var myAnimationList = flexibleAniamtion.createAnimationList(myAnimation,myAnimat
 myAnimationList.start();
 
 ```
+
+### 周期性生产规律性动画
+
+我们可以使页面上的某个元素连续多次或者一直做着规律性动画。下面举一些简单的栗子:
+
+
+连续执行3次动画,每一次动画,id为test元素向左移动100px,向下移动200px,背景色从默认颜色变化绿色。
+
+``` js
+
+	var myAnimation=flexibleAnimation.create(document.getElementById('test'));
+	myAnimation.set({
+            rules:[
+                'backgroundColor:#00FF00',
+                'transform:rotate(90deg)',
+                'left:+100px',
+                'top:+200px'
+            ],
+            times:3,// 执行3次动画
+            duration:1000,
+            easing:'ease'
+     });
+     myAnimation.start();
+
+
+```
+
+动画永不停止,每一次动画,id为test元素向左移动100px,向下移动200px,背景色从默认颜色变化绿色。
+
+``` js
+
+
+	var myAnimation=flexibleAnimation.create(document.getElementById('test'));
+	myAnimation.set({
+            rules:[
+                'backgroundColor:#00FF00',
+                'transform:rotate(90deg)',
+                'left:+100px',
+                'top:+200px'
+            ],
+            forever:true,
+            duration:1000,
+            easing:'ease'
+     });
+     myAnimation.start();
+
+
+
+```
+
+注意：与颜色相关的属性、transform属性暂不支持用+或者-符号表示递增或者递减
+
 ## flexibleAniamtion
 
 
@@ -110,8 +162,10 @@ myAnimationList.start();
   - rules 数组,描述动画最终的目标信息
   - easing 字符串,可选 设定动画的速度曲线(可选:'linear'、'ease'(默认)、'easeIn'、'easeOut'、'easeInOut') 
 		   数组-必须为4个数字,前两个数字代表贝塞尔曲线的P1点，后两个数字代表P2点。例如:0.42,0.12,0.23,0.18
-  - duration 动画持续时间，单位为ms	
-  - delay 动画的延迟时间,单位为ms
+  - duration 数字,动画持续时间,可选,单位为ms	
+  - delay 数字,动画的延迟时间,可选,单位为ms
+  - times 数字,动画执行的次数,可选,默认为1
+  - forever 布尔值,表示动画是否一直执行
 
 ### createAnimationList(Animate,Animate1,Animate2...)
 创建并返回一个动画队列
@@ -212,6 +266,8 @@ myAnimationList.delete(myAnimation1);
 
 ## rules支持
 
+
+- 表示递增或者递减地改变属性值，可用+、-,例如:left:-200px(每一次动画left逐渐减少200px)。与颜色相关的属性以及transform属性暂时不支持此特性。
 - 不支持所有简写的属性(勿用),例如:font,background,border
 - 不完全支持transform:rotate(xdeg)，不过也能产生效果
 - 如果存在两个同样的属性，只对第一个起作用
