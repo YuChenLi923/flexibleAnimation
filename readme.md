@@ -2,7 +2,7 @@
 
 这个是用纯JS编写的轻量级生成动画的库，而且它能够兼容目前的主流游览器甚至到较老版本的IE6。
 
-当前版本0.5.0。
+当前版本0.5.1。
 
 ## 快速开始
 
@@ -166,8 +166,10 @@ myAnimationList.start();
   - delay 数字,动画的延迟时间,可选,单位为ms
   - times 数字,动画执行的次数,可选,默认为1
   - forever 布尔值,表示动画是否一直执行
+  - callback 函数,可选，动画执行完毕后的回调函数(forever动画不会被调用!)
 
 ### createAnimationList(Animate,Animate1,Animate2...)
+
 创建并返回一个动画队列
 
 ``` js
@@ -204,8 +206,11 @@ var myAnimationList = flexibleAniamtion.createAnimationList(myAnimation,myAnimat
   - rules 数组,描述动画最终的目标信息
   - easing 字符串,可选 设定动画的速度曲线(可选:'linear'、'ease'(默认)、'easeIn'、'easeOut'、'easeInOut') 
 		   数组-必须为4个数字,前两个数字代表贝塞尔曲线的P1点，后两个数字代表P2点。例如:0.42,0.12,0.23,0.18
-  - duration 动画持续时间，单位为ms
-  - delay 动画的延迟时间,单位为ms
+  - duration 数字,动画持续时间,可选,单位为ms	
+  - delay 数字,动画的延迟时间,可选,单位为ms
+  - times 数字,动画执行的次数,可选,默认为1
+  - forever 布尔值,表示动画是否一直执行
+  - callback 函数,可选，动画执行完毕后的回调函数(forever动画不会被调用!)
 
 举个例子:
 
@@ -228,12 +233,6 @@ var div=flexibleAniamtion.createAnimation(document.getElementById('test'),{
 
 开启动画
 
-
-### callback(func)
-
-创建动画执行完毕后的回调函数
-
-- fun 必选，函数
 
 
 ## AnimateList对象的方法

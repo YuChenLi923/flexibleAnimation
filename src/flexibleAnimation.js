@@ -1,7 +1,7 @@
 ﻿/*
  *@author: YuChenLi
- *@version:0.5.0
- *@date: 2017/5/7
+ *@version:0.5.1
+ *@date: 2017/5/8
  */
 (function(window){
     // 数值解析
@@ -252,9 +252,7 @@
                 }
                 this.dom.style.cssText=result;
                 this.startTime = 0;
-                if(this.func){
-                    this.func(this.args);
-                }
+
 
                 if(this.times>0 || this.forever){
                     this.startTime = +new Date();
@@ -262,6 +260,9 @@
                     this.times=this.times-1
                     return true;
                 }else{
+                    if(this.callback){
+                        this.callback();
+                    }
                     return false;
                 }
             }
@@ -280,6 +281,7 @@
         set:function (config) {
             var rules = config.rules,
                 t = 0,
+                callback = config.callback,
                 forever = config.forever || false,
                 times = config.times,
                 delay = config.delay || 0,
@@ -298,11 +300,13 @@
                     ++ t;
                 }
             }
+            delete this.rules;
             this.times = times-1;
             this.realyRules = t;
             this.delay = delay;
             this.duration = duration ;
             this.forever = forever;
+            this.callback = callback;
             this.easing = speedPattern(easing);
         },
         start:function(){
@@ -316,13 +320,6 @@
                 }
             };
             go();
-        },
-        callback:function(){
-            this.func=Array.prototype.shift.apply(arguments);
-            this.args=arguments;
-        },
-        remove:function(){
-            delete  this;
         }
     }
     // AnimateList
