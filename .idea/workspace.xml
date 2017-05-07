@@ -161,7 +161,6 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/readme.md" />
         <option value="$PROJECT_DIR$/tests/index.html" />
         <option value="$PROJECT_DIR$/tests/js/flexibleAnimation.min.js" />
         <option value="$PROJECT_DIR$/tests/test forever/index.html" />
@@ -175,6 +174,7 @@
         <option value="$PROJECT_DIR$/src/flexibleAnimation.js" />
         <option value="$PROJECT_DIR$/src/flexibleAnimation.min.js" />
         <option value="$PROJECT_DIR$/build/flexibleAnimation.min.js" />
+        <option value="$PROJECT_DIR$/readme.md" />
       </list>
     </option>
   </component>
@@ -533,12 +533,12 @@
       <workItem from="1494046233216" duration="14000" />
       <workItem from="1494068251773" duration="2571000" />
       <workItem from="1494132085651" duration="219000" />
-      <workItem from="1494143642204" duration="3459000" />
+      <workItem from="1494143642204" duration="3728000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="33378000" />
+    <option name="totallyTimeSpent" value="33647000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-1928" y="-8" width="1936" height="1096" extended-state="6" />
