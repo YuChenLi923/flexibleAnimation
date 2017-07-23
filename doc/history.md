@@ -47,4 +47,4 @@
 0.5.1
 
 - 修复回调函数无法调用的问题
-- 取消Animation对象的callback()方法，改为callback属性
+- 取消Animation对象的callback()方法，改为callback属性.
